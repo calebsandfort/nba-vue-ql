@@ -5,11 +5,13 @@ import seasonSchema from './season';
 import gameSchema from './game';
 import playSchema from './play';
 import scoreBarSchema from './scoreBar';
+import seasonMonthSchema from './seasonMonth';
+import teamSeasonSchema from './teamSeason';
+import teamSeasonMonthSchema from './teamSeasonMonth';
 
 
 const linkSchema = gql`
     scalar Date
-    scalar MomentDate
     
     type Query {
         _: Boolean
@@ -22,4 +24,4 @@ const linkSchema = gql`
     }
 `;
 
-export default [linkSchema, teamSchema, seasonSchema, gameSchema, playSchema, scoreBarSchema];
+export default [linkSchema, teamSchema, seasonSchema, gameSchema, playSchema, scoreBarSchema, seasonMonthSchema, teamSeasonSchema, teamSeasonMonthSchema];

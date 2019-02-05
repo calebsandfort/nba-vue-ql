@@ -22,6 +22,8 @@ const team = (sequelize, DataTypes) => {
   Team.associate = models => {
     Team.hasOne(models.Game, {as: 'HomeTeam', foreignKey : 'homeTeamId'});
     Team.hasOne(models.Game, {as: 'AwayTeam', foreignKey : 'awayTeamId'});
+    Team.hasMany(models.TeamSeason, { onDelete: 'CASCADE' });
+    Team.hasMany(models.TeamSeasonMonth, { onDelete: 'CASCADE' });
   };
 
   return Team;

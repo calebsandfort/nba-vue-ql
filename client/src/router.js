@@ -5,7 +5,7 @@ import LandingPage from './components/LandingPage'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes: [
     {
@@ -27,7 +27,7 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './components/TeamList.vue')
+      component: () => import(/* webpackChunkName: "about" */ './components/Team/TeamList.vue')
     },
     {
       path: '/team/:teamId',
@@ -35,7 +35,7 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './components/Team.vue')
+      component: () => import(/* webpackChunkName: "about" */ './components/Team/Team.vue')
     }
   ]
 })

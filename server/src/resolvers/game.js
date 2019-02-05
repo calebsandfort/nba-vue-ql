@@ -72,6 +72,12 @@ export default {
     homeTeam: async (game, args, { loaders }) => {
       return await loaders.team.load(game.homeTeamId);
     },
+    season: async (game, args, { models }) => {
+      return await models.Season.findById(game.seasonId);
+    },
+    month: async (game, args, { models }) => {
+      return await models.SeasonMonth.findById(game.seasonMonthId);
+    },
     plays: async (game, args, { models }) => {
       return await models.Play.findAll({
         where: {

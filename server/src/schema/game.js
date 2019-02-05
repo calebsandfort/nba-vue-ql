@@ -16,19 +16,29 @@ export default gql`
     bbref_id: String!
     away_score: Int!
     home_score: Int!
+    is_playoff: Boolean!
+    away_win: Boolean!
+    home_win: Boolean!
     bbref_url: String!
     awayTeam: Team!
     homeTeam: Team!
     plays: [Play]
     scoreBars: [ScoreBar]
+    season: Season
+    month: SeasonMonth
   }
   input GameInput {
       date: Date!
       bbref_id: String!,
       away_score: Int!
       home_score: Int!
+      is_playoff: Boolean!
+      away_win: Boolean!
+      home_win: Boolean!
       awayTeamId: ID!,
       homeTeamId: ID!,
+      seasonId: ID!,
+      seasonMonthId: ID!,
       plays: [PlayInput],
       scoreBars: [ScoreBarInput]
   }

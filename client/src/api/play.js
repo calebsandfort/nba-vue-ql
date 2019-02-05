@@ -3,20 +3,23 @@ import {errorHandler} from "./index";
 
 export const fragments = {
   simple: gql`
-    fragment SimpleTeam on Team{
+    fragment SimplePlay on Play{
         id
-        name
-        bbref_id,
-        bbref_url,
-        bbref_logo_url
+        idx,
+        away_score,
+        home_score,
+        play_away_score,
+        play_home_score,
+        minute,
+        second
     }
   `
 }
 
 const GET = gql`
     query ($id: ID!) {
-        team(id: $id) {
-            ...SimpleTeam
+        play(id: $id) {
+            ...SimplePlay
         }
     }
     ${fragments.simple}
@@ -24,28 +27,28 @@ const GET = gql`
 
 const GET_ALL = gql`
     query{
-        teams {
-            ...SimpleTeam
+        plays {
+            ...SimplePlay
         }
     }
     ${fragments.simple}
 `;
 
 const CREATE = gql`
-    mutation ($input: TeamInput!) {
-        createTeam(input: $input)
+    mutation ($input: PlayInput!) {
+        createPlay(input: $input)
         {
-            ...SimpleTeam
+            ...SimplePlay
         }
     }
     ${fragments.simple}
 `;
 
 const UPDATE = gql`
-    mutation ($id: ID!, $input: TeamInput!) {
-        updateTeam(id: $id, input: $input)
+    mutation ($id: ID!, $input: PlayInput!) {
+        updatePlay(id: $id, input: $input)
         {
-            ...SimpleTeam
+            ...SimplePlay
         }
     }
     ${fragments.simple}
@@ -53,7 +56,7 @@ const UPDATE = gql`
 
 const DELETE = gql`
     mutation ($id: ID!) {
-        deleteTeam(id: $id)
+        deletePlay(id: $id)
     }
 `;
 
@@ -88,7 +91,7 @@ export const update = async (client, variables) =>
     })
     .catch(errorHandler);
 
-export const deleteTeam = async (client, variables) =>
+export const deletePlay = async (client, variables) =>
   client
     .mutate({
       mutation: DELETE,
@@ -97,13 +100,13 @@ export const deleteTeam = async (client, variables) =>
     .catch(errorHandler);
 
 export const createFromList = async (client, list) => {
-  const teams = [];
+  const plays = [];
 
   for (let i = 0; i < list.length; i++) {
-    teams.push((await create(client, {
+    plays.push((await create(client, {
       input: list[i]
-    })).data.createTeam);
+    })).data.createPlay);
   }
 
-  return teams;
+  return plays;
 };

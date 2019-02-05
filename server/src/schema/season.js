@@ -17,8 +17,12 @@ export default gql`
     bbref_url: String!
     display: String!
     schedule_urls: [String!]!
+    months(order: String): [SeasonMonth]
+    games: [Game]
+    teamSeason(teamId: Int!): TeamSeason
   }
   input SeasonInput {
       year: Int!
+      months: [SeasonMonthInput]
   }
 `;

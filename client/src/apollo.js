@@ -6,7 +6,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 
 const httpLink = new HttpLink({
   // You should use an absolute URL here
-  uri: "http://localhost:5050/graphql"
+  uri: process.env.NODE_ENV !== 'production' ? "http://localhost:5050/graphql" : "http://nbavueql-backend.calebinthecloud.com/graphql"
 })
 
 // Create the apollo client

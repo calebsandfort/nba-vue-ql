@@ -30,11 +30,34 @@ const game = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
+    is_playoff: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    away_win: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    home_win: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
   });
 
   Game.associate = models => {
     Game.hasMany(models.Play, { onDelete: 'CASCADE' });
     Game.hasMany(models.ScoreBar, { onDelete: 'CASCADE' });
+    Game.belongsTo(models.Season, { onDelete: 'CASCADE' });
+    Game.belongsTo(models.SeasonMonth, { onDelete: 'CASCADE' });
   };
 
   return Game;

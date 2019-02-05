@@ -3,20 +3,22 @@ import {errorHandler} from "./index";
 
 export const fragments = {
   simple: gql`
-    fragment SimpleTeam on Team{
+    fragment SimpleTeamSeason on TeamSeason{
         id
-        name
-        bbref_id,
-        bbref_url,
-        bbref_logo_url
+        reg_wins
+        reg_losses,
+        playoff_wins,
+        playoff_losses,
+        reg_record,
+        playoff_record
     }
   `
 }
 
 const GET = gql`
     query ($id: ID!) {
-        team(id: $id) {
-            ...SimpleTeam
+        teamSeason(id: $id) {
+            ...SimpleTeamSeason
         }
     }
     ${fragments.simple}
@@ -24,28 +26,28 @@ const GET = gql`
 
 const GET_ALL = gql`
     query{
-        teams {
-            ...SimpleTeam
+        teamSeasons {
+            ...SimpleTeamSeason
         }
     }
     ${fragments.simple}
 `;
 
 const CREATE = gql`
-    mutation ($input: TeamInput!) {
-        createTeam(input: $input)
+    mutation ($input: TeamSeasonInput!) {
+        createTeamSeason(input: $input)
         {
-            ...SimpleTeam
+            ...SimpleTeamSeason
         }
     }
     ${fragments.simple}
 `;
 
 const UPDATE = gql`
-    mutation ($id: ID!, $input: TeamInput!) {
-        updateTeam(id: $id, input: $input)
+    mutation ($id: ID!, $input: TeamSeasonInput!) {
+        updateTeamSeason(id: $id, input: $input)
         {
-            ...SimpleTeam
+            ...SimpleTeamSeason
         }
     }
     ${fragments.simple}
@@ -53,7 +55,7 @@ const UPDATE = gql`
 
 const DELETE = gql`
     mutation ($id: ID!) {
-        deleteTeam(id: $id)
+        deleteTeamSeason(id: $id)
     }
 `;
 
@@ -88,7 +90,7 @@ export const update = async (client, variables) =>
     })
     .catch(errorHandler);
 
-export const deleteTeam = async (client, variables) =>
+export const deleteTeamSeason = async (client, variables) =>
   client
     .mutate({
       mutation: DELETE,
@@ -97,13 +99,13 @@ export const deleteTeam = async (client, variables) =>
     .catch(errorHandler);
 
 export const createFromList = async (client, list) => {
-  const teams = [];
+  const teamSeasons = [];
 
   for (let i = 0; i < list.length; i++) {
-    teams.push((await create(client, {
+    teamSeasons.push((await create(client, {
       input: list[i]
-    })).data.createTeam);
+    })).data.createTeamSeason);
   }
 
-  return teams;
+  return teamSeasons;
 };

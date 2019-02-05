@@ -1,10 +1,13 @@
 import { gql } from "apollo-boost";
+import {errorHandler} from "./index";
 import { getGame } from "../scrape/bbref-scraper";
 import _ from 'lodash';
+import { fragments as playFragments } from "./play";
+import { fragments as scoreBarFragments } from "./scoreBar";
 
-const GET = gql`
-    query ($id: ID!) {
-        game(id: $id) {
+export const fragments = {
+    simple: gql`
+        fragment SimpleGame on Game{
             id
             bbref_id,
             away_score,
@@ -18,32 +21,26 @@ const GET = gql`
             homeTeam {
                 id,
                 name
-            },
+            }
+        }
+    `
+}
+
+const GET = gql`
+    query ($id: ID!) {
+        game(id: $id) {
+            ...SimpleGame,
             plays {
-                idx,
-                away_score,
-                home_score,
-                play_away_score,
-                play_home_score,
-                minute,
-                second
+                ...SimplePlay
             },
             scoreBars {
-                bar_number,
-                away_open,
-                away_high,
-                away_low,
-                away_close,
-                away_volume,
-                home_open,
-                home_high,
-                home_low,
-                home_close,
-                home_volume,
-                volume
+                ...SimpleScoreBar
             }
         }
     }
+    ${fragments.simple}
+    ${playFragments.simple}
+    ${scoreBarFragments.simple}
 `;
 
 const GET_ALL = gql`
@@ -155,20 +152,23 @@ export const get = async (client, variables) =>
     .query({
       query: GET,
       variables: variables
-    });
+    })
+    .catch(errorHandler);
 
 export const getAll = async (client) =>
   client
     .query({
       query: GET_ALL
-    });
+    })
+    .catch(errorHandler);
 
 export const create = async (client, variables) => {
   return client
     .mutate({
       mutation: CREATE,
       variables: variables
-    });
+    })
+    .catch(errorHandler);
 }
 
 export const update = async (client, variables) =>
@@ -176,14 +176,16 @@ export const update = async (client, variables) =>
     .mutate({
       mutation: UPDATE,
       variables: variables
-    });
+    })
+    .catch(errorHandler);
 
 export const deleteGame = async (client, variables) =>
   client
     .mutate({
       mutation: DELETE,
       variables: variables
-    });
+    })
+    .catch(errorHandler);
 
 export const createFromList = async (client, list) => {
     // const createPromises = _.map(list, function(item) {

@@ -10,6 +10,12 @@ const season = (sequelize, DataTypes) => {
     },
   });
 
+  Season.associate = models => {
+    Season.hasMany(models.Game, { onDelete: 'CASCADE' });
+    Season.hasMany(models.SeasonMonth, { onDelete: 'CASCADE' });
+    Season.hasMany(models.TeamSeason, { onDelete: 'CASCADE' });
+  };
+
   return Season;
 };
 

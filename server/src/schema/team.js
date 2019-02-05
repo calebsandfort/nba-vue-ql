@@ -19,6 +19,8 @@ export default gql`
     games: [Game]
     homeGames: [Game]
     awayGames: [Game]
+    teamSeasons: [TeamSeason]
+    teamSeasonMonths: [TeamSeasonMonth]
   }
   input TeamInput {
       name: String

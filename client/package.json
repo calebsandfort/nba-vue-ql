@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --port 4000",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "deploy": "vue-cli-service s3-deploy",
     "test:api:mocha": "mocha --require @babel/register src/api/*.spec.js",
     "test:api:mocha:debug": "mocha --inspect-brk --require @babel/register src/api/*.spec.js",
     "test:scrape": "mocha --require @babel/register src/scrape/*.spec.js",
@@ -18,6 +19,7 @@
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "cross-fetch": "^3.0.0",
+    "dotenv-flow": "^0.2.0",
     "graphql": "^14.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
@@ -25,6 +27,7 @@
     "vue": "^2.5.21",
     "vue-apexcharts": "^1.2.8",
     "vue-apollo": "^3.0.0-beta.11",
+    "vue-cli-plugin-s3-deploy": "^3.0.0",
     "vue-router": "^3.0.1",
     "vuetify": "^1.3.0",
     "vuex": "^3.0.1"

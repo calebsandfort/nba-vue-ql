@@ -2,15 +2,16 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
+  "author": "",
   "scripts": {
-    "build": "babel src/ -d dist/",
-    "start": "nodemon --exec babel-node src/index.js",
+    "build": "npm run babel-build && npm run copy",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "babel-build": "babel src/ -d dist/",
+    "copy": "cp package.json dist/ && cp .env dist/",
+    "start": "nodemon --exec babel-node src/index.js",
     "test:mocha": "mocha --reporter spec --require @babel/register src/**/*.spec.js",
     "test:mocha:debug": "mocha --reporter spec --inspect-brk --require @babel/register src/**/*.spec.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.3.1",
     "apollo-server-express": "^2.3.1",
@@ -26,7 +27,8 @@
     "pg": "^7.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "sequelize": "^4.42.0"
+    "sequelize": "^4.42.0",
+    "vue-cli-plugin-s3-deploy": "^3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -38,5 +40,6 @@
     "concurrently": "^4.1.0",
     "nodemon": "^1.18.9",
     "prettier": "1.15.3"
-  }
+  },
+  "license": "ISC"
 }

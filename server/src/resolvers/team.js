@@ -77,6 +77,20 @@ export default {
           awayTeamId: team.id,
         },
       });
+    },
+    teamSeasons: async (team, args, { models }) => {
+      return await models.TeamSeason.findAll({
+        where: {
+          teamId: team.id,
+        },
+      });
+    },
+    teamSeasonMonths: async (team, args, { models }) => {
+      return await models.TeamSeasonMonth.findAll({
+        where: {
+          teamId: team.id,
+        },
+      });
     }
   },
 };

@@ -67,6 +67,17 @@ export const getSeasons = async (count) => {
             year: getSeasonYear(row.attr("href"))
           }
 
+          scrapedSeason.months = [];
+          scrapedSeason.months.push({ year: scrapedSeason.year - 1, month: 'October', idx: 1 });
+          scrapedSeason.months.push({ year: scrapedSeason.year - 1, month: 'November', idx: 2 });
+          scrapedSeason.months.push({ year: scrapedSeason.year - 1, month: 'December', idx: 3 });
+          scrapedSeason.months.push({ year: scrapedSeason.year, month: 'January', idx: 4 });
+          scrapedSeason.months.push({ year: scrapedSeason.year, month: 'February', idx: 5 });
+          scrapedSeason.months.push({ year: scrapedSeason.year, month: 'March', idx: 6 });
+          scrapedSeason.months.push({ year: scrapedSeason.year, month: 'April', idx: 7 });
+          scrapedSeason.months.push({ year: scrapedSeason.year, month: 'May', idx: 8 });
+          scrapedSeason.months.push({ year: scrapedSeason.year, month: 'June', idx: 9 });
+
           seasons.push(scrapedSeason);
         }
       });
@@ -96,8 +107,8 @@ export const scrapeSeasons = async (seasons, teams, addTestingProps = false) => 
   let games = []
 
   for(let i = 0; i < seasons.length; i++) {
-    for (let j = 0; j < seasons[i].schedule_urls.length; j++) {
-      games = _.concat(games, (await scrapeSeasonMonth(seasons[i].schedule_urls[j], teams, addTestingProps)).games);
+    for (let j = 0; j < seasons[i].months.length; j++) {
+      games = _.concat(games, (await scrapeSeasonMonth(seasons[i], seasons[i].months[j], teams, addTestingProps)).games);
     }
   }
 
@@ -114,15 +125,15 @@ export const scrapeSeason = async (season, teams, addTestingProps = false) => {
   return games;
 };
 
-export const scrapeSeasonMonth = async (url, teams, addTestingProps = false) => {
+export const scrapeSeasonMonth = async (season, month, teams, addTestingProps = false) => {
   const response = {
     games: []
   }
 
+  const url = month.bbref_url;
   let el = {};
-  const monthDisplay = getMonthDisplay(url);
 
-  process.stdout.write(`Scraping games from ${monthDisplay}...`);
+  process.stdout.write(`Scraping games from ${month.display}...`);
 
   const game_bbref_ids = await rp(url)
     .then(function(html) {
@@ -145,7 +156,7 @@ export const scrapeSeasonMonth = async (url, teams, addTestingProps = false) => 
     const gamePromises = [];
 
     game_bbref_ids.forEach(function(bbref_id) {
-      gamePromises.push(getGame(bbref_id, teams));
+      gamePromises.push(getGame(bbref_id, teams, season, month));
     });
 
     response.games = await Promise.all(gamePromises);
@@ -163,7 +174,7 @@ export const scrapeSeasonMonth = async (url, teams, addTestingProps = false) => 
   return response;
 }
 
-export const getGame = async (id, teams, addTestingProps = false) => {
+export const getGame = async (id, teams, season, month, addTestingProps = false) => {
   return rp(`https://www.basketball-reference.com/boxscores/pbp/${id}.html`)
     .then(function(html){
       let game = {};
@@ -201,6 +212,9 @@ export const getGame = async (id, teams, addTestingProps = false) => {
       game.awayTeamId = parseInt(awayTeam.id);
       game.homeTeamId = parseInt(homeTeam.id);
       game.date = getGameDate(dateElement.text());
+      game.seasonId = season.id;
+      game.seasonMonthId = month.id;
+      game.is_playoff = $('#other_scores_link[data-label="All Games in Series"]', html).length > 0;
 
       let currentQuarter = 0;
       let currentMinute = 0;
@@ -302,6 +316,8 @@ export const getGame = async (id, teams, addTestingProps = false) => {
 
       game.away_score = away_score;
       game.home_score = home_score;
+      game.away_win = away_score > home_score;
+      game.home_win = home_score > away_score;
 
       if(addTestingProps) {
         game.plays_length = game.plays.length;

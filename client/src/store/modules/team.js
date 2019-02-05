@@ -17,7 +17,7 @@ export const mutations = {
     state.list = list;
   },
 
-  setTeam(state, teamId){
+  setItem(state, teamId){
     state.team = state.list.find(team => team.id == teamId);
   }
 }
@@ -28,6 +28,14 @@ export const actions = {
       const response = await teamApi.getAll(apolloClient);
       commit('setList', response.data.teams);
     }
+  },
+
+  async fetchItem({ dispatch, commit, state }, teamId){
+    if(state.list.length == 0) {
+      await dispatch('fetchList');
+    }
+
+    commit('setItem', teamId);
   }
 }
 
