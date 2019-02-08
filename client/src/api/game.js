@@ -46,45 +46,35 @@ const GET = gql`
 const GET_ALL = gql`
     query{
         games {
-            id,
-            bbref_id,
-            away_score,
-            home_score,
-            bbref_url,
-            date,
-            awayTeam {
-                id,
-                name
-            },
-            homeTeam {
-                id,
-                name
-            },
+            ...SimpleGame,
             plays {
-                idx,
-                away_score,
-                home_score,
-                play_away_score,
-                play_home_score,
-                minute,
-                second
+                ...SimplePlay
             },
             scoreBars {
-                bar_number,
-                away_open,
-                away_high,
-                away_low,
-                away_close,
-                away_volume,
-                home_open,
-                home_high,
-                home_low,
-                home_close,
-                home_volume,
-                volume
+                ...SimpleScoreBar
             }
         }
     }
+    ${fragments.simple}
+    ${playFragments.simple}
+    ${scoreBarFragments.simple}
+`;
+
+const GET_ALL_QUERYABLE = gql`
+    query ($includePlays: Boolean!, $includeScoreBars: Boolean!, $query: EntityQuery) {
+        gamesQueryable(query: $query) {
+            ...SimpleGame,
+            plays @include(if: $includePlays) {
+                ...SimplePlay
+            },
+            scoreBars @include(if: $includeScoreBars) {
+                ...SimpleScoreBar
+            }
+        }
+    }
+    ${fragments.simple}
+    ${playFragments.simple}
+    ${scoreBarFragments.simple}
 `;
 
 const CREATE = gql`
@@ -147,6 +137,15 @@ const DELETE = gql`
     }
 `;
 
+export const getRequestVariables = () => {
+    return {
+        id: 0,
+        includePlays: false,
+        includeScoreBars: false,
+        query: null
+    };
+}
+
 export const get = async (client, variables) =>
   client
     .query({
@@ -159,6 +158,14 @@ export const getAll = async (client) =>
   client
     .query({
       query: GET_ALL
+    })
+    .catch(errorHandler);
+
+export const getAllQueryable = async (client, variables) =>
+  client
+    .query({
+        query: GET_ALL_QUERYABLE,
+        variables: variables
     })
     .catch(errorHandler);
 

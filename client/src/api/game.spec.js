@@ -4,6 +4,7 @@ import moment from "moment";
 import { getClient } from "./apollo-client-factory";
 import * as gameApi from "./game";
 import * as teamApi from "../api/team";
+import * as entityQuery from "../utilities/entityQuery";
 
 let client = null;
 let gameID = '1';
@@ -180,4 +181,27 @@ describe("games", () => {
   //
   //   expect(result.data.games.length).to.eql(expectedResult);
   // });
+
+  it("returns a list of games", async () => {
+    const expected = 29;
+
+    const okc = _.find(teams, { 'bbref_id': 'OKC' });
+
+    const query = entityQuery.entityQueryCtor(true, false, 0, 0, 'date DESC');
+    query.searchFilters.push(entityQuery.searchFilterCtor(false, false, 'is_playoff', entityQuery.SearchFilterCondition.Is, null, null, true));
+
+    const teamSfg = entityQuery.searchFilterCtor(false, true, '', entityQuery.SearchFilterCondition.None, null, null, null);
+    teamSfg.searchFilters.push(entityQuery.searchFilterCtor(false, false, 'awayTeamId', entityQuery.SearchFilterCondition.Is, parseInt(okc.id), null, null));
+    teamSfg.searchFilters.push(entityQuery.searchFilterCtor(false, false, 'homeTeamId', entityQuery.SearchFilterCondition.Is, parseInt(okc.id), null, null));
+    query.searchFilters.push(teamSfg);
+
+    const requestVariables = gameApi.getRequestVariables();
+    requestVariables.query = query
+
+    const result = await gameApi.getAllQueryable(client, requestVariables);
+    const actual = result.data.gamesQueryable.length;
+
+    expect(expected).to.eql(actual);
+  });
+
 });

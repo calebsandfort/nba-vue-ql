@@ -8,6 +8,7 @@ import scoreBarSchema from './scoreBar';
 import seasonMonthSchema from './seasonMonth';
 import teamSeasonSchema from './teamSeason';
 import teamSeasonMonthSchema from './teamSeasonMonth';
+import entityQuerySchema from './entityQuery';
 
 
 const linkSchema = gql`
@@ -24,4 +25,4 @@ const linkSchema = gql`
     }
 `;
 
-export default [linkSchema, teamSchema, seasonSchema, gameSchema, playSchema, scoreBarSchema, seasonMonthSchema, teamSeasonSchema, teamSeasonMonthSchema];
+export default [linkSchema, teamSchema, seasonSchema, gameSchema, playSchema, scoreBarSchema, seasonMonthSchema, teamSeasonSchema, teamSeasonMonthSchema, entityQuerySchema];
