@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import team from './modules/team'
 import season from './modules/season'
 import seasonMonth from './modules/seasonMonth'
+import game from './modules/game'
 import ui from './modules/ui'
 Vue.use(Vuex)
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     team,
     season,
     seasonMonth,
+    game,
     ui
   },
   strict: debug

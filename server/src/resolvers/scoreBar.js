@@ -1,4 +1,5 @@
 import Sequelize from "sequelize";
+import * as entityQuery from '../utilities/entityQuery';
 
 export default {
   Query: {
@@ -14,6 +15,10 @@ export default {
         params.order = Sequelize.literal(order);
       }
 
+      return await models.ScoreBar.findAll(params);
+    },
+    scoreBarsQueryable: async (parent, {query}, { models }) => {
+      const params = entityQuery.entityQueryToSequelize(query);
       return await models.ScoreBar.findAll(params);
     },
     scoreBar: async (parent, { id }, { models }) => {

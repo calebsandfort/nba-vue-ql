@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-express';
 export default gql`
   extend type Query {
     scoreBars(offset: Int, limit: Int, order: String): [ScoreBar!]
+    scoreBarsQueryable(query: EntityQuery): [ScoreBar!]
     scoreBar(id: ID!): ScoreBar
   }
   extend type Mutation {

@@ -1,7 +1,5 @@
 import { gql } from "apollo-boost";
 import {errorHandler} from "./index";
-import { getGame } from "../scrape/bbref-scraper";
-import _ from 'lodash';
 import { fragments as playFragments } from "./play";
 import { fragments as scoreBarFragments } from "./scoreBar";
 
@@ -23,24 +21,40 @@ export const fragments = {
                 name
             }
         }
+    `,
+    teamFields: gql`
+        fragment GameTeamFields on Game{
+          team_win(teamId: $teamId),
+          team_home(teamId: $teamId),
+          result_score(teamId: $teamId),
+          opponent(teamId: $teamId) {
+            id,
+            name,
+            bbref_logo_url
+          },
+          team_score(teamId: $teamId),
+          opponent_score(teamId: $teamId)
+        }
     `
 }
 
 const GET = gql`
-    query ($id: ID!) {
+    query ($id: ID!, $includePlays: Boolean!, $includeScoreBars: Boolean!, $includeTeamFields: Boolean!, $teamId: ID!) {
         game(id: $id) {
             ...SimpleGame,
-            plays {
-                ...SimplePlay
-            },
-            scoreBars {
-                ...SimpleScoreBar
-            }
+            plays @include(if: $includePlays) {
+              ...SimplePlay
+          },
+          scoreBars @include(if: $includeScoreBars) {
+              ...SimpleScoreBar
+          },
+          ...GameTeamFields @include(if: $includeTeamFields)
         }
     }
     ${fragments.simple}
     ${playFragments.simple}
     ${scoreBarFragments.simple}
+    ${fragments.teamFields}
 `;
 
 const GET_ALL = gql`
@@ -61,7 +75,7 @@ const GET_ALL = gql`
 `;
 
 const GET_ALL_QUERYABLE = gql`
-    query ($includePlays: Boolean!, $includeScoreBars: Boolean!, $query: EntityQuery) {
+    query ($includePlays: Boolean!, $includeScoreBars: Boolean!, $includeTeamFields: Boolean!, $query: EntityQuery, $teamId: ID!) {
         gamesQueryable(query: $query) {
             ...SimpleGame,
             plays @include(if: $includePlays) {
@@ -69,12 +83,14 @@ const GET_ALL_QUERYABLE = gql`
             },
             scoreBars @include(if: $includeScoreBars) {
                 ...SimpleScoreBar
-            }
+            },
+            ...GameTeamFields @include(if: $includeTeamFields)
         }
     }
     ${fragments.simple}
     ${playFragments.simple}
     ${scoreBarFragments.simple}
+    ${fragments.teamFields}
 `;
 
 const CREATE = gql`
@@ -142,7 +158,9 @@ export const getRequestVariables = () => {
         id: 0,
         includePlays: false,
         includeScoreBars: false,
-        query: null
+        includeTeamFields: false,
+        query: null,
+        teamId: null
     };
 }
 

@@ -56,7 +56,7 @@
     },
     methods: {
       seasonMonthClick: function(seasonMonthId) {
-        alert(seasonMonthId);
+        this.$emit('season-month-clicked', seasonMonthId);
       },
       goBack: function() {
         this.$emit('navigator-changed', "seasons");

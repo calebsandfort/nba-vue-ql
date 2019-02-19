@@ -30,24 +30,30 @@
                             </v-card-title>
                             <v-divider light></v-divider>
                             <v-card-title>
-                                <transition name="slide-fade" mode="out-in">
+                                <transition name="fade" mode="out-in">
                                     <SeasonList v-if="navigatorState === 'seasons'" key="seasonList" :team-id="teamId" v-on:season-clicked="seasonClicked"></SeasonList>
                                     <SeasonMonthList v-if="navigatorState === 'seasonMonths'"
                                                      key="seasonMonthList"
                                                      v-on:season-month-clicked="seasonMonthClicked"
-                                                    v-on:navigator-changed="navigatorChanged"></SeasonMonthList>
+                                                     v-on:navigator-changed="navigatorChanged"></SeasonMonthList>
+                                    <TeamGameList v-if="navigatorState.startsWith('game')"
+                                                     key="gamesList"
+                                                     v-on:game-clicked="gameClicked"
+                                                     v-on:navigator-changed="navigatorChanged"></TeamGameList>
                                 </transition>
                             </v-card-title>
                         </v-card>
                     </v-flex>
                     <v-flex xs8 pl-3>
                         <v-card>
-                            <v-card-title>
+                            <v-card-title class="pa-1">
                                 <v-layout row>
                                     <v-flex xs12>
-                                        <transition name="slide-fade" mode="out-in">
+                                        <transition name="fade" mode="out-in">
                                             <TeamSeasonsContent v-if="navigatorState === 'seasons'" key="teamSeasonsContent"></TeamSeasonsContent>
                                             <TeamSeasonMonthsContent v-if="navigatorState === 'seasonMonths'" key="teamSeasonMonthsContent"></TeamSeasonMonthsContent>
+                                            <TeamGamesContent v-if="navigatorState === 'games'" key="teamGamesContent"></TeamGamesContent>
+                                            <TeamGameContent v-if="navigatorState === 'game'" key="teamGameContent"></TeamGameContent>
                                         </transition>
                                     </v-flex>
                                 </v-layout>
@@ -64,11 +70,16 @@
   import { mapState, mapActions } from "vuex";
   import {getRequestVariables as seasonRequest} from "../../api/season";
   import {getRequestVariables as seasonMonthRequest} from "../../api/seasonMonth";
+  import {getRequestVariables as gameRequest} from "../../api/game";
   import Toolbar from "../Toolbar";
   import SeasonList from "../Season/SeasonList";
   import SeasonMonthList from "../Season/SeasonMonthList";
+  import TeamGameList from "../Team/TeamGameList";
   import TeamSeasonsContent from './TeamSeasonsContent';
   import TeamSeasonMonthsContent from './TeamSeasonMonthsContent';
+  import TeamGamesContent from './TeamGamesContent';
+  import TeamGameContent from './TeamGameContent';
+  import * as entityQuery from "../../utilities/entityQuery"; 
 
   export default {
     name: "Team",
@@ -76,8 +87,11 @@
       Toolbar,
       SeasonList,
       SeasonMonthList,
+      TeamGameList,
       TeamSeasonsContent,
-      TeamSeasonMonthsContent
+      TeamSeasonMonthsContent,
+      TeamGamesContent,
+      TeamGameContent
     },
     computed: {
       teamId () {
@@ -108,7 +122,9 @@
       ...mapActions({
         fetchTeam: 'team/fetchItem',
         fetchSeasons: 'season/fetchList',
-        fetchSeasonMonths: 'seasonMonth/fetchList'
+        fetchSeasonMonths: 'seasonMonth/fetchList',
+        fetchGames: 'game/fetchList',
+        fetchGame: 'game/fetchItem'
       }),
       seasonClicked: function(seasonId) {
         const variables = seasonMonthRequest();
@@ -120,7 +136,33 @@
         this.navigatorState = 'seasonMonths';
       },
       seasonMonthClicked: function(seasonMonthId) {
-        alert(seasonMonthId);
+        const query = entityQuery.entityQueryCtor(true, false, 0, 0, 'Date ASC');
+        query.searchFilters.push(entityQuery.searchFilterCtor(false, false, 'seasonMonthId', entityQuery.SearchFilterCondition.Is, parseInt(seasonMonthId), null, null));
+
+        const teamSfg = entityQuery.searchFilterCtor(false, true, '', entityQuery.SearchFilterCondition.None, null, null, null);
+        teamSfg.searchFilters.push(entityQuery.searchFilterCtor(false, false, 'awayTeamId', entityQuery.SearchFilterCondition.Is, this.teamId, null, null));
+        teamSfg.searchFilters.push(entityQuery.searchFilterCtor(false, false, 'homeTeamId', entityQuery.SearchFilterCondition.Is, this.teamId, null, null));
+        query.searchFilters.push(teamSfg);
+        
+        const variables = gameRequest();
+        variables.teamId = this.teamId;
+        variables.query = query;
+        variables.includeTeamFields = true;
+
+        this.fetchGames(variables);
+
+        this.navigatorState = 'games';
+      },
+      gameClicked: function(gameId) {
+        const variables = gameRequest();
+        variables.id = gameId;
+        variables.teamId = this.teamId;
+        variables.includeTeamFields = true;
+        variables.includePlays = true;
+        variables.includeScoreBars = true;
+
+        this.fetchGame(variables);
+        this.navigatorState = 'game';
       },
       navigatorChanged: function(navigatorState) {
         this.navigatorState = navigatorState;

@@ -1,6 +1,7 @@
 import  moment from 'moment';
 import Sequelize from 'sequelize';
 import _ from 'lodash';
+import * as entityQuery from '../utilities/entityQuery';
 
 export default {
   Query: {
@@ -24,7 +25,10 @@ export default {
 
       return await models.SeasonMonth.findAll(params);
     },
-
+    seasonMonthsQueryable: async (parent, {query}, { models }) => {
+      const params = entityQuery.entityQueryToSequelize(query);
+      return await models.SeasonMonth.findAll(params);
+    },
     seasonMonth: async (parent, { id }, { models }) => {
       return await models.SeasonMonth.findById(id);
     },

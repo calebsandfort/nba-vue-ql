@@ -126,10 +126,6 @@ describe("entityQuery", () => {
 
     const actual = entityQuery.entityQueryToSequelize(query);
 
-    console.log("*****************actual*****************");
-    console.log(actual);
-    console.log("*****************actual*****************");
-
     expect(actual).to.deep.equal(expected);
   });
 });

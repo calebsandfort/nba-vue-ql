@@ -27,6 +27,12 @@ export default gql`
     scoreBars: [ScoreBar]
     season: Season
     month: SeasonMonth
+    team_win(teamId: ID!): Boolean
+    team_home(teamId: ID!): Boolean
+    result_score(teamId: ID!): String
+    team_score(teamId: ID!): Int
+    opponent(teamId: ID!): Team
+    opponent_score(teamId: ID!): Int
   }
   input GameInput {
       date: Date!

@@ -1,66 +1,71 @@
 <template>
     <Chart
       type="line"
-      title="Results by Month"
+      title="Points by Game"
       :series="series"
       :xaxis="xaxis"
-      :yaxis="yaxis"
-      :yaxis-offset="yaxis_offset"></Chart>
+      :yaxis="yaxis"></Chart>
 </template>
 
 <script>
   import { mapState } from "vuex";
   import Chart from '../shared/Chart';
   import _ from 'lodash';
+  import moment from 'moment';
 
   export default {
-    name: "TeamSeasonMonthsContent",
+    name: "TeamGamesContent",
     components: {
       Chart
     },
     computed: {
       ...mapState({
-        seasonMonthStore: state => state.seasonMonth
+        gameStore: state => state.game
       }),
       series: function() {
         return [
           {
-            name: "Wins",
-            data: _.map(this.seasonMonthStore.list, function(s) {
-              return s.teamSeasonMonth.reg_wins;
+            name: "Team",
+            data: _.map(this.gameStore.list, function(g) {
+              return g.team_score;
             })
           },
           {
-            name: "Losses",
-            data: _.map(this.seasonMonthStore.list, function(s) {
-              return s.teamSeasonMonth.reg_losses;
+            name: "Opponent",
+            data: _.map(this.gameStore.list, function(g) {
+              return g.opponent_score;
             })
           }
         ];
       },
-      xaxis: function(){
+      xaxis: function (){
         return {
-          categories: _.map(this.seasonMonthStore.list, function(s) {
-            return s.display;
+          categories: _.map(this.gameStore.list, function(g) {
+            return moment(g.date).format("M/D");
           }),
           title: {
-            text: 'Month'
+            text: 'Date',
+            offsetY: 15
+          },
+          labels: {
+            rotate: -45
           }
         }
       },
       yaxis: function(){
         return {
-          title: 'Results'
+          title: 'Score'
         }
       }
     },
     data: function() {
       return {
-        yaxis_offset: 2
+
       }
     }
   };
 </script>
 
 <style scoped>
+
 </style>

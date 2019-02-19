@@ -88,6 +88,7 @@ export default {
         where: {
           gameId: game.id,
         },
+        order: Sequelize.literal('idx ASC')
       });
     },
     scoreBars: async (game, args, { models }) => {
@@ -95,7 +96,29 @@ export default {
         where: {
           gameId: game.id,
         },
+        order: Sequelize.literal('bar_number ASC')
       });
+    },
+    team_win: (game, {teamId}) => {
+      return game.homeTeamId == teamId ? game.home_win : game.away_win;
+    },
+    team_home: (game, {teamId}) => {
+      return game.homeTeamId == teamId;
+    },
+    result_score: (game, {teamId}) => {
+      const firstScore = game.homeTeamId == teamId ? game.home_score : game.away_score;
+      const secondScore = game.homeTeamId == teamId ? game.away_score : game.home_score;
+      return `${firstScore} - ${secondScore}`;
+    },
+    opponent: async (game, {teamId}, {loaders}) => {
+      const opponent_id = game.homeTeamId == teamId ? game.awayTeamId : game.homeTeamId;
+      return await loaders.team.load(opponent_id);
+    },
+    team_score: (game, {teamId}) => {
+      return game.homeTeamId == teamId ? game.home_score : game.away_score;
+    },
+    opponent_score: (game, {teamId}) => {
+      return game.homeTeamId == teamId ? game.away_score : game.home_score;
     }
   },
 };

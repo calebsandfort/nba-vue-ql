@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-express';
 export default gql`
   extend type Query {
     teams(offset: Int, limit: Int, order: String): [Team!]
+    teamsQueryable(query: EntityQuery): [Team!]
     team(id: ID!): Team
   }
   extend type Mutation {
