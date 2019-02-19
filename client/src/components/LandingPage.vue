@@ -25,6 +25,8 @@
                         <h2 class="headline font-weight-bold mb-3">Sections</h2>
                         <v-layout justify-center>
                             <router-link :to="'/teams'" class="subheading mx-3">Teams</router-link>
+                            <a href="http://nbavueql-backend.calebinthecloud.com/graphql" class="subheading mx-3" target="_blank">GraphQL Playground</a>
+                            <a href="https://github.com/calebsandfort/nba-vue-ql" class="subheading mx-3" target="_blank">GitHub Repo</a>
                         </v-layout>
                     </v-flex>
                     <v-flex xs10 offset-xs1>
@@ -48,8 +50,6 @@
                             </v-flex>
                           </v-layout>
                         </v-container>
-
-                        
                     </v-flex>
                 </v-layout>
             </v-container>
